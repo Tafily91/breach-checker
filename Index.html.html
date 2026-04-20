@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Data Breach Checker</title>
+  <meta name="description" content="Check if your email was exposed in major data breaches">
+  <meta name="theme-color" content="#302b63">
+  
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  
+  <style>
+    /* Reset & Base Styles */
+    * { 
+      box-sizing: border-box; 
+      margin: 0; 
+      padding: 0; 
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+      min-height: 100vh;
+      padding: 24px 16px;
+      color: #ffffff;
+    }
+
+    .wrapper { 
+      max-width: 600px; 
+      margin: 0 auto; 
+    }
+
+    /* Typography & Header */
+    .app-header { 
+      text-align: center; 
+      margin-bottom: 35px; 
+    }
+    
+    .app-header .logo-icon { 
+      font-size: 48px; 
+      margin-bottom: 12px; 
+    }
+    
+    .app-header h1 { 
+      font-size: 24px; 
+      font-weight: bold; 
+      letter-spacing: 0.5px;
+    }
+    
+    .app-header p { 
+      color: #a0aec0; 
+      font-size: 15px; 
+      margin-top: 10px; 
+    }
+
+    /* UI Components */
+    .panel {
+      background-color: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+
+    .input-group label { 
+      color: #e2e8f0; 
+      font-size: 14px; 
+      font-weight: 600; 
+      display: block; 
+      margin-bottom: 8px; 
+    }
+
+    input[type="email"] {
+      width: 100%;
+      padding: 15px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+      font-size: 16px;
+    }
+
+    input[type="email"]:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    .help-text { 
+      color: #718096; 
+      font-size: 13px; 
+      margin-top: 10px; 
+    }
+
+    .primary-btn {
+      width: 100%;
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 8px;
+      border: none;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+    }
+
+    .primary-btn:hover { opacity: 0.9; }
+    .primary-btn:disabled { background: #4a5568; cursor: wait; opacity: 0.7; }
+
+    /* Feedback & Results */
+    .alert-box {
+      background: rgba(252, 129, 129, 0.15);
+      border: 1px solid rgba(252, 129, 129, 0.3);
+      border-radius: 8px;
+      padding: 15px;
+      color: #fc8181;
+      margin-bottom: 20px;
+      font-size: 14px;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 6px 20px;
+      border-radius: 20px;
+      font-weight: bold;
+      font-size: 18px;
+      margin: 10px 0;
+    }
+    .status-danger { background-color: #e53e3e; }
+    .status-safe { background-color: #38a169; }
+
+    .result-summary { color: #cbd5e0; font-size: 15px; line-height: 1.5; }
+    .section-title { color: #e2e8f0; font-size: 18px; font-weight: bold; margin-bottom: 15px; }
+
+    .incident-card {
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 12px;
+    }
+    
+    .incident-header { 
+      display: flex; 
+      justify-content: space-between; 
+      margin-bottom: 10px; 
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      padding-bottom: 8px;
+    }
+    
+    .company-name { font-weight: bold; font-size: 16px; color: #fff; }
+    .incident-year { color: #a0aec0; font-size: 14px; }
+    .data-types { color: #cbd5e0; font-size: 14px; }
+
+    .action-steps { list-style: none; }
+    .action-steps li {
+      margin-bottom: 12px;
+      color: #cbd5e0;
+      font-size: 15px;
+      display: flex;
+      gap: 12px;
+    }
+    
+    .step-number { color: #667eea; font-weight: bold; }
+    .footer-note { color: #4a5568; font-size: 13px; text-align: center; margin-top: 30px; }
+
+    .d-none { display: none; }
+    .text-center { text-align: center; }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <header class="app-header">
+      <div class="logo-icon">🔐</div>
+      <h1>BreachCheck Shield</h1>
+      <p>Find out if your email is part of known data leaks.</p>
+    </header>
+
+    <main class="panel">
+      <div class="input-group">
+        <label for="emailInput">Email Address</label>
+        <input type="email" id="emailInput" placeholder="name@domain.com" autocomplete="email" />
+      </div>
+      <p class="help-text">Your search is performed securely. We don't save your email.</p>
+      <button id="searchBtn" class="primary-btn">Scan Database</button>
+    </main>
+
+    <div id="errorMsg" class="alert-box d-none"></div>
+    
+    <div id="resultsArea" class="d-none">
+      <div class="panel text-center">
+        <p style="color:#a0aec0; font-size:12px; text-transform:uppercase; letter-spacing:1px;">Security Status</p>
+        <div id="riskLevelBadge" class="status-badge"></div>
+        <p id="riskSummary" class="result-summary"></p>
+      </div>
+
+      <div id="breachContainer" class="d-none">
+        <h3 class="section-title">Found in these breaches:</h3>
+        <div id="breachList"></div>
+      </div>
+
+      <div class="panel">
+        <h3 class="section-title">Recommended Actions</h3>
+        <ul id="actionList" class="action-steps"></ul>
+      </div>
+
+      <p class="footer-note">This is a demonstration app. For official checks, we recommend using Troy Hunt's HaveIBeenPwned service.</p>
+    </div>
+  </div>
+
+  <script>
+    // DOM Elements
+    const emailInput = document.getElementById('emailInput');
+    const searchBtn = document.getElementById('searchBtn');
+    const errorMsg = document.getElementById('errorMsg');
+    const resultsArea = document.getElementById('resultsArea');
+    const breachContainer = document.getElementById('breachContainer');
+    
+    // Event Listeners
+    searchBtn.addEventListener('click', handleSearch);
+    emailInput.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') handleSearch();
+    });
+
+    // Main App Logic
+    async function handleSearch() {
+      const email = emailInput.value.trim().toLowerCase();
+      
+      // Basic validation
+      if (!email || email.indexOf('@') === -1 || email.indexOf('.') === -1) {
+        showError("Please enter a valid format, like you@example.com.");
+        return;
+      }
+
+      resetUI();
+      searchBtn.disabled = true;
+      searchBtn.textContent = "Scanning...";
+
+      try {
+        const responseData = await simulateBackendAPI(email);
+        displayResults(responseData);
+      } catch (err) {
+        showError("Unable to connect to the server. Please check your connection.");
+      } finally {
+        searchBtn.disabled = false;
+        searchBtn.textContent = "Scan Database";
+      }
+    }
+
+    // Renders the data to the screen
+    function displayResults(data) {
+      resultsArea.classList.remove('d-none');
+      
+      const badge = document.getElementById('riskLevelBadge');
+      badge.className = 'status-badge ' + (data.risk === 'High' ? 'status-danger' : 'status-safe');
+      badge.textContent = data.risk === 'High' ? '⚠️ High Risk' : '✅ Clear';
+      
+      document.getElementById('riskSummary').textContent = data.summary;
+
+      // Handle Breaches list
+      const bList = document.getElementById('breachList');
+      bList.innerHTML = '';
+      
+      if (data.breaches.length > 0) {
+        breachContainer.classList.remove('d-none');
+        data.breaches.forEach(function(item) {
+          const div = document.createElement('div');
+          div.className = 'incident-card';
+          div.innerHTML = `
+            <div class="incident-header">
+              <span class="company-name">${item.company}</span>
+              <span class="incident-year">${item.year}</span>
+            </div>
+            <div class="data-types"><strong>Exposed:</strong> ${item.data}</div>
+          `;
+          bList.appendChild(div);
+        });
+      }
+
+      // Handle Recommendations
+      const aList = document.getElementById('actionList');
+      aList.innerHTML = '';
+      data.actions.forEach(function(action, index) {
+        const li = document.createElement('li');
+        li.innerHTML = `<span class="step-number">0${index + 1}</span> <span>${action}</span>`;
+        aList.appendChild(li);
+      });
+    }
+
+    // Helper Functions
+    function showError(msg) {
+      errorMsg.textContent = msg;
+      errorMsg.classList.remove('d-none');
+    }
+
+    function resetUI() {
+      errorMsg.classList.add('d-none');
+      resultsArea.classList.add('d-none');
+      breachContainer.classList.add('d-none');
+    }
+
+    // SIMULATED BACKEND: Replaces the broken AI API call.
+    function simulateBackendAPI(email) {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          // Trigger the 'breached' state if the email has 'test', 'admin', or 'demo' in it
+          const isBreached = email.includes('test') || email.includes('admin') || email.includes('demo');
+          
+          if (isBreached) {
+            resolve({
+              risk: "High",
+              summary: "We found your email address in publicly known data leaks.",
+              breaches:[
+                { company: "Canva", year: "2019", data: "Email addresses, passwords, names" },
+                { company: "LinkedIn", year: "2012", data: "Email addresses, passwords" },
+                { company: "Dropbox", year: "2012", data: "Email addresses, passwords" }
+              ],
+              actions:[
+                "Change your password for the affected accounts immediately.",
+                "Ensure you are not using the same password on other websites.",
+                "Enable Two-Factor Authentication (2FA) wherever possible."
+              ]
+            });
+          } else {
+            resolve({
+              risk: "Low",
+              summary: "Good news! We couldn't find this email in our database of known breaches.",
+              breaches: [],
+              actions:[
+                "Continue using strong, unique passwords for every site.",
+                "Consider using a password manager.",
+                "Check back in a few months, as new leaks happen frequently."
+              ]
+            });
+          }
+        }, 1200); // 1.2 second delay to feel like a real network request
+      });
+    }
+
+    // Init Service Worker for PWA capabilities
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js').catch(err => {
+          console.log('SW registration failed:', err);
+        });
+      });
+    }
+  </script>
+</body>
+</html>
