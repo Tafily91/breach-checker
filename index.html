@@ -91,11 +91,13 @@
             letter-spacing: 2px;
         }
 
-        .primary-btn:hover { 
+        .primary-btn:hover:not(:disabled) { 
             background: #8b0000; 
             color: #000; 
             box-shadow: 0 0 40px #ff0000; 
         }
+
+        .primary-btn:disabled { opacity: 0.5; cursor: wait; }
 
         .status-badge { 
             display: inline-block; 
@@ -156,8 +158,6 @@
             margin: 0 5px 5px 0;
         }
 
-        .external-link-btn:hover { background: #4a0000; color: #fff; }
-
         .d-none { display: none; }
         .text-center { text-align: center; }
         .help-text { color: #222; font-size: 10px; margin-top: 10px; }
@@ -177,13 +177,13 @@
         <header class="app-header">
             <div class="logo-icon">💀</div>
             <h1>BreachCheck Shield</h1>
-            <p style="color: #4a4a4a; font-size: 12px;">INFILTRATING THE ABYSS...</p>
+            <p style="color: #4a4a4a; font-size: 12px;">TUNNELING THROUGH THE DARK WEB...</p>
         </header>
 
         <main class="panel">
             <div class="input-group">
                 <label for="emailInput">TARGET EMAIL ADDRESS</label>
-                <input type="email" id="emailInput" placeholder="victim@darkweb.com" />
+                <input type="email" id="emailInput" placeholder="victim@darkweb.com" autocomplete="off" />
             </div>
             <p class="help-text">NO DATA IS SAVED. THE VOID FORGETS.</p>
             <button id="searchBtn" class="primary-btn">SCAN SECTORS</button>
@@ -209,7 +209,7 @@
             </div>
 
             <div class="panel" style="border: 1px dashed #4a0000;">
-                <h3 class="section-title">DEEP WEB MIRRORS</h3>
+                <h3 class="section-title">EXTERNAL WATCHTOWERS</h3>
                 <div id="externalLinks"></div>
             </div>
         </div>
@@ -233,44 +233,51 @@
 
             resetUI();
             searchBtn.disabled = true;
-            searchBtn.textContent = "EXTRACTING...";
+            searchBtn.textContent = "INFILTRATING...";
 
             try {
-                // Using BreachDirectory API logic
-                const url = `https://rapidapi.com{email}`;
-                const options = {
-                    method: 'GET',
-                    headers: {
-                        'x-rapidapi-key': 'ee1a473e11msh87ad17ac3c0f6d4p1cb247jsnc9c3b6ea069f',
-                        'x-rapidapi-host': '://rapidapi.com'
-                    }
-                };
+                // XposedOrNot Public API Call
+                const url = `https://xposedornot.com{email}`;
+                const response = await fetch(url);
+                
+                // XposedOrNot returns 404 if the email is safe
+                if (response.status === 404) {
+                    displayResults({
+                        risk: "Low",
+                        summary: "SYSTEM CLEAN. NO DATA LEAKS FOUND.",
+                        breaches: [],
+                        actions: [
+                            "Keep your passwords complex and unique.",
+                            "Enable 2FA where available.",
+                            "Stay vigilant against phishing."
+                        ]
+                    });
+                    return;
+                }
 
-                const response = await fetch(url, options);
+                if (!response.ok) throw new Error("API Sector Blocked");
+
                 const result = await response.json();
 
-                const hasBreaches = result.found > 0 || (result.result && result.result.length > 0);
-
                 const responseData = {
-                    risk: hasBreaches ? "High" : "Low",
-                    summary: hasBreaches 
-                        ? `WARNING: ${result.found || result.result.length} EXPOSURES DETECTED.` 
-                        : "SYSTEM CLEAN. NO DATA LEAKS FOUND.",
-                    breaches: result.result ? result.result.map(b => ({
-                        company: b.source || "Unknown Source",
-                        data: b.has_password ? "Passwords Exposed" : "PII Leak"
-                    })) : [],
+                    risk: "High",
+                    summary: `WARNING: ${result.breaches.length} DATA LEAKS DETECTED.`,
+                    breaches: result.breaches.map(bName => ({
+                        company: bName.replace(/_/g, ' '),
+                        data: "Sensitive Personal Info & Passwords"
+                    })),
                     actions: [
                         "Immediately rotate all compromised passwords.",
                         "Activate hardware-based Multi-Factor Authentication.",
-                        "Check for unauthorized login attempts in activity logs."
+                        "Monitor bank accounts for unauthorized movement."
                     ]
                 };
 
                 displayResults(responseData);
+
             } catch (err) {
                 console.error(err);
-                showError("CONNECTION SEVERED. RETRY INFILTRATION.");
+                showError("CONNECTION SEVERED. THE DARK WEB IS UNSTABLE.");
             } finally {
                 searchBtn.disabled = false;
                 searchBtn.textContent = "SCAN SECTORS";
@@ -308,21 +315,19 @@
             data.actions.forEach((action, i) => {
                 const li = document.createElement('li');
                 li.style.marginBottom = "10px";
-                li.innerHTML = `<span style="color:#ff0000; font-weight:bold;">[${i + 1}]</span> ${action}`;
+                li.innerHTML = `<span style="color:#ff0000; font-weight:bold;">[0${i + 1}]</span> ${action}`;
                 aList.appendChild(li);
             });
 
             const extContainer = document.getElementById('externalLinks');
             extContainer.innerHTML = '';
             const sources = [
-                { name: "HIBP", url: "https://haveibeenpwned.com" },
-                { name: "MONITOR", url: "https://firefox.com" }
+                { name: "XPOSEDORNOT", url: "https://xposedornot.com" },
+                { name: "HIBP", url: "https://haveibeenpwned.com" }
             ];
             sources.forEach(src => {
                 const a = document.createElement('a');
-                a.href = src.url;
-                a.target = "_blank";
-                a.className = "external-link-btn";
+                a.href = src.url; a.target = "_blank"; a.className = "external-link-btn";
                 a.innerText = src.name;
                 extContainer.appendChild(a);
             });
