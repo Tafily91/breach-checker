@@ -3,8 +3,8 @@ const URLS_TO_CACHE =[
   "./",
   "./index.html",
   "./manifest.json",
-  "./icon-192.png",
-  "./icon-512.png"
+  "./logo.png",
+  "./logo.png"
 ];
 
 // Install Event: Save files to local storage
