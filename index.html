@@ -13,8 +13,8 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
         
         body {
-            font-family: 'Courier New', Courier, monospace; /* Hacker style font */
-            background: #000000; /* Pitch Black */
+            font-family: 'Courier New', Courier, monospace;
+            background: #000000;
             color: #e2e8f0;
             min-height: 100vh;
             padding: 24px 16px;
@@ -24,10 +24,9 @@
 
         .app-header { text-align: center; margin-bottom: 35px; }
         
-        /* Glitch Animation for Header */
         .app-header h1 {
             font-size: 28px;
-            color: #850111; /* Blood Red */
+            color: #850111;
             text-transform: uppercase;
             letter-spacing: 2px;
             animation: glitch 3s infinite;
@@ -43,9 +42,9 @@
         .app-header p { color: #718096; font-size: 14px; margin-top: 10px; }
 
         .panel {
-            background-color: rgba(133, 1, 17, 0.05); /* Faint red glow */
+            background-color: rgba(133, 1, 17, 0.05);
             border: 1px solid rgba(133, 1, 17, 0.4);
-            border-radius: 4px; /* Sharper corners look scarier */
+            border-radius: 4px;
             padding: 24px;
             margin-bottom: 20px;
         }
@@ -150,13 +149,13 @@
             searchBtn.textContent = "INFILTRATING...";
 
             try {
-                // FIXED URL AND HOST
+                // --- FIXED API URL AND HOST ---
                 const url = `https://rapidapi.com{email}`;
                 const options = {
                     method: 'GET',
                     headers: {
                         'x-rapidapi-key': 'ee1a473e11msh87ad17ac3c0f6d4p1cb247jsnc9c3b6ea069f',
-                        'x-rapidapi-host': 'breachdirectory.p.rapidapi.com'
+                        'x-rapidapi-host': '://rapidapi.com'
                     }
                 };
 
@@ -164,8 +163,8 @@
                 const result = await response.json();
 
                 const responseData = {
-                    risk: result.success && result.result.length > 0 ? "High" : "Low",
-                    summary: result.success && result.result.length > 0 
+                    risk: result.success && result.result && result.result.length > 0 ? "High" : "Low",
+                    summary: result.success && result.result && result.result.length > 0 
                         ? `WE FOUND ${result.result.length} EXPOSURES.` 
                         : "NOT FOUND IN THIS SECTOR.",
                     breaches: result.result ? result.result.map(b => ({ company: b.source, data: "Email/Passwords" })) : [],
@@ -178,7 +177,8 @@
 
                 displayResults(responseData);
             } catch (err) {
-                showError("SYSTEM FAILURE. CHECK CONNECTION.");
+                console.error(err);
+                showError("SYSTEM FAILURE. CHECK CONNECTION OR API LIMITS.");
             } finally {
                 searchBtn.disabled = false;
                 searchBtn.textContent = "SCAN DATABASE";
