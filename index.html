@@ -158,7 +158,9 @@
             margin: 0 5px 5px 0;
         }
 
-        .d-none { display: none; }
+        /* FIXED: Added !important to ensure these stay hidden on load */
+        .d-none { display: none !important; }
+        
         .text-center { text-align: center; }
         .help-text { color: #222; font-size: 10px; margin-top: 10px; }
         
@@ -236,58 +238,42 @@
             searchBtn.textContent = "INFILTRATING...";
 
             try {
-                // FIXED: Using a public CORS proxy to allow browser-side requests
-                const proxy = 'https://cors-anywhere.herokuapp.com/';
+                // FIXED: Using AllOrigins 'raw' proxy mode for maximum compatibility
+                // This bypasses strict CORS rules by routing traffic through a public proxy
                 const targetUrl = `https://xposedornot.com{email}`;
+                const proxyUrl = `https://allorigins.win{encodeURIComponent(targetUrl)}`;
+
+                const response = await fetch(proxyUrl);
                 
-                const response = await fetch(proxy + targetUrl, {
-                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
-                });
-                
-                // 404 means email is clean in XposedOrNot
+                // 404 means the email was NOT found in the breach database (Safe)
                 if (response.status === 404) {
-                    displayResults({
-                        risk: "Low",
-                        summary: "SYSTEM CLEAN. NO DATA LEAKS FOUND.",
-                        breaches: [],
-                        actions: [
-                            "Keep your passwords complex and unique.",
-                            "Enable 2FA where available.",
-                            "Stay vigilant against phishing."
-                        ]
-                    });
+                    displayResults({ breaches: [] }); 
                     return;
                 }
+                
+                if (!response.ok) throw new Error("Sector Blocked");
 
-                // If proxy access is needed, help the user
-                if (response.status === 403) {
-                    showError("PROXY ACCESS REQUIRED. Please visit https://herokuapp.com to enable temporary access.");
-                    return;
+                const data = await response.json();
+
+                // DATA PARSING FIX: XposedOrNot returns a list inside a list: [["Adobe", "Yahoo"]]
+                // We flatten this structure to ensure the code can read it.
+                let cleanBreaches = [];
+                
+                if (data.breaches && Array.isArray(data.breaches)) {
+                    // If it's a nested array (standard behavior), grab the first element
+                    if (Array.isArray(data.breaches[0])) {
+                        cleanBreaches = data.breaches[0];
+                    } else {
+                        cleanBreaches = data.breaches;
+                    }
                 }
 
-                if (!response.ok) throw new Error("API Sector Blocked");
-
-                const result = await response.json();
-
-                const responseData = {
-                    risk: "High",
-                    summary: `WARNING: ${result.breaches.length} DATA LEAKS DETECTED.`,
-                    breaches: result.breaches.map(bName => ({
-                        company: bName.replace(/_/g, ' '),
-                        data: "Sensitive Personal Info & Passwords"
-                    })),
-                    actions: [
-                        "Immediately rotate all compromised passwords.",
-                        "Activate hardware-based Multi-Factor Authentication.",
-                        "Monitor bank accounts for unauthorized movement."
-                    ]
-                };
-
-                displayResults(responseData);
+                displayResults({ breaches: cleanBreaches });
 
             } catch (err) {
                 console.error(err);
-                showError("CONNECTION SEVERED. THE DARK WEB IS UNSTABLE.");
+                // If all else fails, show the error manually
+                showError("CONNECTION SEVERED. UNABLE TO REACH THE DARK WEB.");
             } finally {
                 searchBtn.disabled = false;
                 searchBtn.textContent = "SCAN SECTORS";
@@ -297,38 +283,45 @@
         function displayResults(data) {
             resultsArea.classList.remove('d-none');
             const badge = document.getElementById('riskLevelBadge');
+            const breachList = data.breaches || [];
             
-            if (data.risk === 'High') {
+            if (breachList.length > 0) {
+                // COMPROMISED STATE
                 badge.className = 'status-badge status-danger';
                 badge.textContent = '☢️ COMPROMISED';
-            } else {
-                badge.className = 'status-badge status-safe';
-                badge.textContent = '🌘 SECURE';
-            }
-
-            document.getElementById('riskSummary').textContent = data.summary;
-
-            const bList = document.getElementById('breachList');
-            bList.innerHTML = '';
-            if (data.breaches.length > 0) {
+                document.getElementById('riskSummary').textContent = `WARNING: ${breachList.length} DATA LEAKS DETECTED.`;
+                
                 breachContainer.classList.remove('d-none');
-                data.breaches.forEach(item => {
+                const bList = document.getElementById('breachList');
+                bList.innerHTML = '';
+                
+                breachList.forEach(name => {
                     const div = document.createElement('div');
                     div.className = 'incident-card';
-                    div.innerHTML = `<div class="company-name">${item.company}</div><div style="color:#4a4a4a;">TYPE: ${item.data}</div>`;
+                    div.innerHTML = `<div class="company-name">${name}</div><div style="color:#4a4a4a;">TYPE: SENSITIVE DATA</div>`;
                     bList.appendChild(div);
                 });
+
+                updateActionList([
+                    "Immediately rotate all compromised passwords.",
+                    "Activate hardware-based Multi-Factor Authentication.",
+                    "Monitor bank accounts for unauthorized movement."
+                ]);
+
+            } else {
+                // SECURE STATE
+                badge.className = 'status-badge status-safe';
+                badge.textContent = '🌘 SECURE';
+                document.getElementById('riskSummary').textContent = "SYSTEM CLEAN. NO DATA LEAKS FOUND.";
+                
+                updateActionList([
+                    "Keep your passwords complex and unique.",
+                    "Enable 2FA where available.",
+                    "Stay vigilant against phishing attempts."
+                ]);
             }
 
-            const aList = document.getElementById('actionList');
-            aList.innerHTML = '';
-            data.actions.forEach((action, i) => {
-                const li = document.createElement('li');
-                li.style.marginBottom = "10px";
-                li.innerHTML = `<span style="color:#ff0000; font-weight:bold;">[0${i + 1}]</span> ${action}`;
-                aList.appendChild(li);
-            });
-
+            // Setup External Links
             const extContainer = document.getElementById('externalLinks');
             extContainer.innerHTML = '';
             const sources = [
@@ -337,18 +330,32 @@
             ];
             sources.forEach(src => {
                 const a = document.createElement('a');
-                a.href = src.url; a.target = "_blank"; a.className = "external-link-btn";
+                a.href = src.url;
+                a.target = "_blank";
+                a.className = "external-link-btn";
                 a.innerText = src.name;
                 extContainer.appendChild(a);
             });
         }
 
+        function updateActionList(actions) {
+            const aList = document.getElementById('actionList');
+            aList.innerHTML = '';
+            actions.forEach((action, i) => {
+                const li = document.createElement('li');
+                li.style.marginBottom = "10px";
+                li.innerHTML = `<span style="color:#ff0000; font-weight:bold;">[0${i + 1}]</span> ${action}`;
+                aList.appendChild(li);
+            });
+        }
+
         function showError(msg) {
-            errorMsg.innerHTML = msg;
+            errorMsg.textContent = msg;
             errorMsg.classList.remove('d-none');
         }
 
         function resetUI() {
+            // Ensure everything is hidden before a new search
             errorMsg.classList.add('d-none');
             resultsArea.classList.add('d-none');
             breachContainer.classList.add('d-none');
