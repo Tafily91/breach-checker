@@ -1,9 +1,7 @@
-const CACHE_NAME = "breach-app-v2";
-const URLS_TO_CACHE =[
+const URLS_TO_CACHE = [
   "./",
   "./index.html",
   "./manifest.json",
-  "./logo.png",
   "./logo.png"
 ];
 
