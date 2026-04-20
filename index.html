@@ -209,7 +209,7 @@
             </div>
 
             <div class="panel" style="border: 1px dashed #4a0000;">
-                <h3 class="section-title">EXTERNAL WATCHTOWERS</h3>
+                <h3 class="section-title">WATCHTOWERS</h3>
                 <div id="externalLinks"></div>
             </div>
         </div>
@@ -236,11 +236,15 @@
             searchBtn.textContent = "INFILTRATING...";
 
             try {
-                // XposedOrNot Public API Call
-                const url = `https://xposedornot.com{email}`;
-                const response = await fetch(url);
+                // FIXED: Using a public CORS proxy to allow browser-side requests
+                const proxy = 'https://cors-anywhere.herokuapp.com/';
+                const targetUrl = `https://xposedornot.com{email}`;
                 
-                // XposedOrNot returns 404 if the email is safe
+                const response = await fetch(proxy + targetUrl, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                });
+                
+                // 404 means email is clean in XposedOrNot
                 if (response.status === 404) {
                     displayResults({
                         risk: "Low",
@@ -252,6 +256,12 @@
                             "Stay vigilant against phishing."
                         ]
                     });
+                    return;
+                }
+
+                // If proxy access is needed, help the user
+                if (response.status === 403) {
+                    showError("PROXY ACCESS REQUIRED. Please visit https://herokuapp.com to enable temporary access.");
                     return;
                 }
 
@@ -334,7 +344,7 @@
         }
 
         function showError(msg) {
-            errorMsg.textContent = msg;
+            errorMsg.innerHTML = msg;
             errorMsg.classList.remove('d-none');
         }
 
