@@ -237,10 +237,43 @@
       searchBtn.disabled = true;
       searchBtn.textContent = "Scanning...";
 
-      try {
-        const responseData = await simulateBackendAPI(email);
+         try {
+                // 2. The Real API Call
+        const url = `https://rapidapi.com{email}`;
+        const options = {
+            method: 'GET',
+            headers: {
+                'x-rapidapi-key': 'ee1a473e11msh87ad17ac3c0f6d4p1cb247jsnc9c3b6ea069f',
+                'x-rapidapi-host': '://rapidapi.com'
+            }
+        };
+
+
+        const response = await fetch(url, options);
+        const result = await response.json();
+
+        // 3. Format the results for your UI
+        const responseData = {
+            risk: result.success && result.result.length > 0 ? "High" : "Low",
+            summary: result.success && result.result.length > 0 
+                ? `Found in ${result.result.length} potential leaks.` 
+                : "No breaches found in our database.",
+            breaches: result.result ? result.result.map(b => ({
+                company: b.source,
+                year: "Reported",
+                data: "Emails/Passwords"
+            })) : [],
+            actions: [
+                "Change your password immediately.",
+                "Enable Two-Factor Authentication (2FA).",
+                "Use a password manager."
+            ]
+        };
+
         displayResults(responseData);
-      } catch (err) {
+
+    } catch (err) {
+
         showError("Unable to connect to the server. Please check your connection.");
       } finally {
         searchBtn.disabled = false;
