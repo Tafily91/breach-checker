@@ -3,86 +3,173 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BreachCheck Shield | Horror Edition</title>
-    <meta name="description" content="Check if your email was exposed in major data breaches">
-    <meta name="theme-color" content="#000000">
-    <link rel="manifest" href="manifest.json">
-    <link rel="apple-touch-icon" href="logo.png">
+    <title>BreachCheck Shield | ABYSSAL EDITION</title>
     <style>
-        /* --- HORROR THEME STYLES --- */
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        
-        body {
-            font-family: 'Courier New', Courier, monospace;
-            background: #000000;
-            color: #e2e8f0;
-            min-height: 100vh;
+        /* --- ABYSSAL HORROR UI --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; cursor: crosshair; }
+
+        body { 
+            font-family: 'Courier New', Courier, monospace; 
+            background: #000000; 
+            color: #d1d1d1; 
+            min-height: 100vh; 
             padding: 24px 16px;
+            overflow-x: hidden;
+            /* CRT Scanline Effect */
+            background-image: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.3) 50%), 
+                              linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+            background-size: 100% 4px, 3px 100%;
         }
 
-        .wrapper { max-width: 600px; margin: 0 auto; }
+        .wrapper { max-width: 600px; margin: 0 auto; position: relative; }
 
-        .app-header { text-align: center; margin-bottom: 35px; }
+        .app-header { text-align: center; margin-bottom: 40px; }
         
-        .app-header h1 {
-            font-size: 28px;
-            color: #850111;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            animation: glitch 3s infinite;
+        .logo-icon { font-size: 50px; filter: drop-shadow(0 0 10px #ff0000); }
+
+        .app-header h1 { 
+            font-size: 32px; 
+            color: #ff0000; 
+            text-transform: uppercase; 
+            letter-spacing: 5px; 
+            text-shadow: 0 0 15px #8b0000;
+            animation: glitch 0.3s infinite alternate;
         }
 
         @keyframes glitch {
-            0% { text-shadow: 2px 2px #ff073a; }
-            2% { text-shadow: -2px -2px #ff073a; }
-            4% { text-shadow: 2px 2px #ff073a; }
-            95% { text-shadow: none; }
+            0% { transform: translate(0); text-shadow: 2px 2px #ff0000; }
+            25% { transform: translate(-2px, 1px); }
+            50% { transform: translate(2px, -1px); text-shadow: -2px -2px #ff0000; }
+            100% { transform: translate(0); }
         }
 
-        .app-header p { color: #718096; font-size: 14px; margin-top: 10px; }
-
-        .panel {
-            background-color: rgba(133, 1, 17, 0.05);
-            border: 1px solid rgba(133, 1, 17, 0.4);
-            border-radius: 4px;
-            padding: 24px;
+        .panel { 
+            background: #080808; 
+            border: 1px solid #4a0000; 
+            padding: 24px; 
             margin-bottom: 20px;
+            box-shadow: inset 0 0 20px #000, 0 0 15px rgba(139, 0, 0, 0.2);
         }
 
-        .input-group label { color: #850111; font-size: 14px; font-weight: bold; display: block; margin-bottom: 8px; }
-        
-        input[type="email"] {
-            width: 100%; padding: 15px; border-radius: 4px; 
-            border: 1px solid #850111; background: #000; color: #ff073a; font-size: 16px;
-        }
-        
-        input[type="email"]:focus { outline: none; border-color: #ff073a; box-shadow: 0 0 10px #ff073a; }
-
-        .primary-btn {
-            width: 100%; margin-top: 20px; padding: 15px; border-radius: 4px; border: 1px solid #ff073a;
-            background: #850111; color: white; font-size: 16px; font-weight: bold; cursor: pointer;
-            transition: all 0.2s ease;
+        .input-group label { 
+            color: #ff0000; 
+            font-size: 12px; 
+            font-weight: bold; 
+            display: block; 
+            margin-bottom: 8px;
+            letter-spacing: 3px;
         }
 
-        .primary-btn:hover { background: #ff073a; color: black; box-shadow: 0 0 20px #ff073a; }
-
-        .status-badge { display: inline-block; padding: 6px 20px; border-radius: 4px; font-weight: bold; font-size: 18px; margin: 10px 0; }
-        .status-danger { background-color: #ff073a; color: black; box-shadow: 0 0 15px #ff073a; }
-        .status-safe { background-color: #2f855a; color: white; }
-
-        .incident-card { background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(133, 1, 17, 0.3); padding: 15px; margin-bottom: 12px; }
-        .company-name { font-weight: bold; color: #ff073a; }
-        .section-title { color: #850111; margin-bottom: 15px; border-bottom: 1px solid #850111; padding-bottom: 5px; }
-
-        .external-link-btn {
-            display: inline-block; padding: 8px 12px; background: transparent;
-            color: #ff073a; text-decoration: none; border-radius: 4px; font-size: 12px;
-            font-weight: bold; border: 1px solid #ff073a; margin-right: 5px; margin-bottom: 5px;
+        input[type="email"] { 
+            width: 100%; 
+            padding: 15px; 
+            border: 1px solid #4a0000; 
+            background: #000; 
+            color: #ff0000; 
+            font-size: 18px;
+            border-radius: 0;
+            transition: 0.3s;
         }
+
+        input[type="email"]:focus { 
+            outline: none; 
+            border-color: #ff0000; 
+            box-shadow: 0 0 25px rgba(255, 0, 0, 0.5); 
+        }
+
+        .primary-btn { 
+            width: 100%; 
+            margin-top: 20px; 
+            padding: 18px; 
+            border: 1px solid #ff0000; 
+            background: #5e0200; 
+            color: white; 
+            font-size: 18px; 
+            font-weight: bold; 
+            text-transform: uppercase;
+            cursor: pointer;
+            letter-spacing: 2px;
+        }
+
+        .primary-btn:hover { 
+            background: #8b0000; 
+            color: #000; 
+            box-shadow: 0 0 40px #ff0000; 
+        }
+
+        .status-badge { 
+            display: inline-block; 
+            padding: 12px 35px; 
+            font-size: 20px; 
+            margin: 15px 0;
+            border: 2px solid;
+            font-weight: 900;
+        }
+
+        .status-danger { 
+            background-color: #8b0000; 
+            color: #fff; 
+            box-shadow: 0 0 30px #ff0000;
+            border-color: #ff0000;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+
+        .status-safe { 
+            background-color: #1a1a1a; 
+            color: #4a4e52; 
+            border-color: #333;
+        }
+
+        .incident-card { 
+            background: #050000; 
+            border-left: 5px solid #8b0000;
+            padding: 15px; 
+            margin-bottom: 12px; 
+            font-size: 14px;
+        }
+
+        .company-name { font-weight: bold; color: #ff0000; text-transform: uppercase; }
+
+        .section-title { 
+            color: #ff0000; 
+            margin-bottom: 15px; 
+            border-bottom: 1px solid #4a0000; 
+            padding-bottom: 5px; 
+            font-size: 12px;
+            letter-spacing: 2px;
+        }
+
+        .external-link-btn { 
+            display: inline-block; 
+            padding: 8px 12px; 
+            background: #000; 
+            color: #ff0000; 
+            text-decoration: none; 
+            border: 1px solid #4a0000;
+            font-size: 11px;
+            margin: 0 5px 5px 0;
+        }
+
+        .external-link-btn:hover { background: #4a0000; color: #fff; }
 
         .d-none { display: none; }
         .text-center { text-align: center; }
-        .help-text { color: #4a5568; font-size: 12px; margin-top: 10px; }
+        .help-text { color: #222; font-size: 10px; margin-top: 10px; }
+        
+        #errorMsg { 
+            color: #ff0000; 
+            background: rgba(139, 0, 0, 0.1); 
+            padding: 10px; 
+            border: 1px solid #ff0000; 
+            margin-bottom: 20px; 
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -90,40 +177,40 @@
         <header class="app-header">
             <div class="logo-icon">💀</div>
             <h1>BreachCheck Shield</h1>
-            <p>Scanning the dark web for your digital footprint...</p>
+            <p style="color: #4a4a4a; font-size: 12px;">INFILTRATING THE ABYSS...</p>
         </header>
 
         <main class="panel">
             <div class="input-group">
-                <label for="emailInput">TARGET EMAIL</label>
-                <input type="email" id="emailInput" placeholder="victim@domain.com" autocomplete="email" />
+                <label for="emailInput">TARGET EMAIL ADDRESS</label>
+                <input type="email" id="emailInput" placeholder="victim@darkweb.com" />
             </div>
-            <p class="help-text">Search is encrypted. We don't save your data.</p>
-            <button id="searchBtn" class="primary-btn">SCAN DATABASE</button>
+            <p class="help-text">NO DATA IS SAVED. THE VOID FORGETS.</p>
+            <button id="searchBtn" class="primary-btn">SCAN SECTORS</button>
         </main>
 
-        <div id="errorMsg" style="color: #ff073a; background: rgba(255,7,58,0.1); padding: 10px; border: 1px solid #ff073a; margin-bottom: 20px;" class="d-none"></div>
+        <div id="errorMsg" class="d-none"></div>
 
         <div id="resultsArea" class="d-none">
             <div class="panel text-center">
-                <p style="color:#718096; font-size:12px; text-transform:uppercase; letter-spacing:1px;">Security Status</p>
+                <p style="color:#4a4a4a; font-size:10px; text-transform:uppercase; letter-spacing:2px;">Threat Level</p>
                 <div id="riskLevelBadge" class="status-badge"></div>
-                <p id="riskSummary" style="color: #cbd5e0; margin-top: 10px;"></p>
+                <p id="riskSummary" style="color: #cbd5e0; margin-top: 10px; font-size: 14px;"></p>
             </div>
 
             <div id="breachContainer" class="d-none">
-                <h3 class="section-title">EXPOSED IN THESE LEAKS:</h3>
+                <h3 class="section-title">CORRUPTED DATA FOUND:</h3>
                 <div id="breachList"></div>
             </div>
 
-            <div class="panel" style="border: 1px dashed #ff073a;">
-                <h3 class="section-title">DEEP SCAN SOURCES</h3>
-                <div id="externalLinks"></div>
+            <div class="panel">
+                <h3 class="section-title">SURVIVAL PROTOCOLS</h3>
+                <ul id="actionList" style="list-style: none; color: #888; font-size: 13px;"></ul>
             </div>
 
-            <div class="panel">
-                <h3 class="section-title">REQUIRED ACTIONS</h3>
-                <ul id="actionList" style="list-style: none; color: #a0aec0;"></ul>
+            <div class="panel" style="border: 1px dashed #4a0000;">
+                <h3 class="section-title">DEEP WEB MIRRORS</h3>
+                <div id="externalLinks"></div>
             </div>
         </div>
     </div>
@@ -140,16 +227,16 @@
         async function handleSearch() {
             const email = emailInput.value.trim().toLowerCase();
             if (!email || !email.includes('@')) {
-                showError("ENTER A VALID TARGET EMAIL.");
+                showError("INVALID TARGET. ENTER A VALID EMAIL.");
                 return;
             }
 
             resetUI();
             searchBtn.disabled = true;
-            searchBtn.textContent = "INFILTRATING...";
+            searchBtn.textContent = "EXTRACTING...";
 
             try {
-                // --- FIXED API URL AND HOST ---
+                // Using BreachDirectory API logic
                 const url = `https://rapidapi.com{email}`;
                 const options = {
                     method: 'GET',
@@ -162,34 +249,46 @@
                 const response = await fetch(url, options);
                 const result = await response.json();
 
+                const hasBreaches = result.found > 0 || (result.result && result.result.length > 0);
+
                 const responseData = {
-                    risk: result.success && result.result && result.result.length > 0 ? "High" : "Low",
-                    summary: result.success && result.result && result.result.length > 0 
-                        ? `WE FOUND ${result.result.length} EXPOSURES.` 
-                        : "NOT FOUND IN THIS SECTOR.",
-                    breaches: result.result ? result.result.map(b => ({ company: b.source, data: "Email/Passwords" })) : [],
+                    risk: hasBreaches ? "High" : "Low",
+                    summary: hasBreaches 
+                        ? `WARNING: ${result.found || result.result.length} EXPOSURES DETECTED.` 
+                        : "SYSTEM CLEAN. NO DATA LEAKS FOUND.",
+                    breaches: result.result ? result.result.map(b => ({
+                        company: b.source || "Unknown Source",
+                        data: b.has_password ? "Passwords Exposed" : "PII Leak"
+                    })) : [],
                     actions: [
-                        "Purge affected passwords.",
-                        "Enable 2FA hardware keys.",
-                        "Monitor financial accounts."
+                        "Immediately rotate all compromised passwords.",
+                        "Activate hardware-based Multi-Factor Authentication.",
+                        "Check for unauthorized login attempts in activity logs."
                     ]
                 };
 
                 displayResults(responseData);
             } catch (err) {
                 console.error(err);
-                showError("SYSTEM FAILURE. CHECK CONNECTION OR API LIMITS.");
+                showError("CONNECTION SEVERED. RETRY INFILTRATION.");
             } finally {
                 searchBtn.disabled = false;
-                searchBtn.textContent = "SCAN DATABASE";
+                searchBtn.textContent = "SCAN SECTORS";
             }
         }
 
         function displayResults(data) {
             resultsArea.classList.remove('d-none');
             const badge = document.getElementById('riskLevelBadge');
-            badge.className = 'status-badge ' + (data.risk === 'High' ? 'status-danger' : 'status-safe');
-            badge.textContent = data.risk === 'High' ? '⚠️ COMPROMISED' : '✅ SECURE';
+            
+            if (data.risk === 'High') {
+                badge.className = 'status-badge status-danger';
+                badge.textContent = '☢️ COMPROMISED';
+            } else {
+                badge.className = 'status-badge status-safe';
+                badge.textContent = '🌘 SECURE';
+            }
+
             document.getElementById('riskSummary').textContent = data.summary;
 
             const bList = document.getElementById('breachList');
@@ -199,37 +298,46 @@
                 data.breaches.forEach(item => {
                     const div = document.createElement('div');
                     div.className = 'incident-card';
-                    div.innerHTML = `<div class="company-name">${item.company}</div><div style="font-size:13px; color:#718096;">EXPOSED: ${item.data}</div>`;
+                    div.innerHTML = `<div class="company-name">${item.company}</div><div style="color:#4a4a4a;">TYPE: ${item.data}</div>`;
                     bList.appendChild(div);
                 });
             }
-
-            const extContainer = document.getElementById('externalLinks');
-            extContainer.innerHTML = '';
-            const sources = [
-                { name: "FIREFOX", url: "https://firefox.com" },
-                { name: "AVAST", url: "https://avast.com" },
-                { name: "HIBP", url: "https://haveibeenpwned.com" }
-            ];
-            sources.forEach(src => {
-                const a = document.createElement('a');
-                a.href = src.url; a.target = "_blank"; a.className = "external-link-btn";
-                a.innerText = src.name;
-                extContainer.appendChild(a);
-            });
 
             const aList = document.getElementById('actionList');
             aList.innerHTML = '';
             data.actions.forEach((action, i) => {
                 const li = document.createElement('li');
                 li.style.marginBottom = "10px";
-                li.innerHTML = `<span style="color:#ff073a; font-weight:bold;">[0${i + 1}]</span> ${action}`;
+                li.innerHTML = `<span style="color:#ff0000; font-weight:bold;">[${i + 1}]</span> ${action}`;
                 aList.appendChild(li);
+            });
+
+            const extContainer = document.getElementById('externalLinks');
+            extContainer.innerHTML = '';
+            const sources = [
+                { name: "HIBP", url: "https://haveibeenpwned.com" },
+                { name: "MONITOR", url: "https://firefox.com" }
+            ];
+            sources.forEach(src => {
+                const a = document.createElement('a');
+                a.href = src.url;
+                a.target = "_blank";
+                a.className = "external-link-btn";
+                a.innerText = src.name;
+                extContainer.appendChild(a);
             });
         }
 
-        function showError(msg) { errorMsg.textContent = msg; errorMsg.classList.remove('d-none'); }
-        function resetUI() { errorMsg.classList.add('d-none'); resultsArea.classList.add('d-none'); breachContainer.classList.add('d-none'); }
+        function showError(msg) {
+            errorMsg.textContent = msg;
+            errorMsg.classList.remove('d-none');
+        }
+
+        function resetUI() {
+            errorMsg.classList.add('d-none');
+            resultsArea.classList.add('d-none');
+            breachContainer.classList.add('d-none');
+        }
     </script>
 </body>
 </html>
